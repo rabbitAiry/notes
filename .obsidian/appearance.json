@@ -1,0 +1,12 @@
+{
+  "theme": "moonstone",
+  "cssTheme": "",
+  "translucency": false,
+  "baseFontSizeAction": false,
+  "accentColor": "#605cd2",
+  "nativeMenus": true,
+  "showViewHeader": true,
+  "enabledCssSnippets": [
+    "themes"
+  ]
+}

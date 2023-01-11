@@ -1,0 +1,154 @@
+{
+  "main": {
+    "id": "93beb11c938366f1",
+    "type": "split",
+    "children": [
+      {
+        "id": "30468a4b1b642825",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "android/Android进阶.md",
+            "mode": "source",
+            "source": false
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "96e4baed058e2c07",
+    "type": "split",
+    "children": [
+      {
+        "id": "72d75b9bb6de4e71",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2f493a66644a1801",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "25158b4d4fe0d261",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "64d07330af645eb8",
+            "type": "leaf",
+            "state": {
+              "type": "starred",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "right": {
+    "id": "3cc18bbe5afa61c6",
+    "type": "split",
+    "children": [
+      {
+        "id": "9dfa9cb7e90ab047",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "77348d818749d998",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "android/Android进阶.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "6ee77ff9f057f2e8",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "android/Android进阶.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "e21225570746ab12",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "0695325d034eb12a",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "android/Android进阶.md"
+              }
+            }
+          },
+          {
+            "id": "d903fdb925b64efc",
+            "type": "leaf",
+            "state": {
+              "type": "advanced-tables-toolbar",
+              "state": {}
+            }
+          }
+        ],
+        "currentTab": 3
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "0695325d034eb12a",
+  "lastOpenFiles": [
+    "android/Android 基础篇.md",
+    "android/Android Jetpack篇.md",
+    "android/Android硬件调用.md",
+    "android/JetpackCompose.md",
+    "语言/Java.md",
+    "语言/Java进阶.md",
+    "语言/Java并发.md",
+    "语言/kotlin.md",
+    "编程之路/设计模式.md",
+    "工具使用手册/git使用.md"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "promptDelete": false,
+  "tabSize": 4,
+  "newLinkFormat": "relative",
+  "attachmentFolderPath": "./",
+  "showUnsupportedFiles": true,
+  "foldIndent": true,
+  "autoPairMarkdown": false,
+  "autoPairBrackets": true,
+  "readableLineLength": true
+}

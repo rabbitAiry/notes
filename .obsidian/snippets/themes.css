@@ -1,0 +1,4 @@
+.theme-light,
+body.theme-light.is-mobile {
+    --color-base-10: #f6f7f8; /* code blocks */
+}
