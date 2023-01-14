@@ -70,6 +70,10 @@ class MainViewFactory(
 	        return MainViewModel(countReserved) as T
     }
 }
+
+// Activity
+vm = ViewModelProvider(this, MainViewFactory(0))
+	.get(MainViewModel::class.java)
 ```
 - 在Compose中
 ```Kotlin

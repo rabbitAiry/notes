@@ -2,10 +2,11 @@
   "promptDelete": false,
   "tabSize": 4,
   "newLinkFormat": "relative",
-  "attachmentFolderPath": "./",
+  "attachmentFolderPath": "./img",
   "showUnsupportedFiles": true,
   "foldIndent": true,
   "autoPairMarkdown": false,
   "autoPairBrackets": true,
-  "readableLineLength": true
+  "readableLineLength": true,
+  "alwaysUpdateLinks": true
 }

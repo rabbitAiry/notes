@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "e16a107ac73ecb07",
+        "id": "a591108939ded345",
         "type": "tabs",
         "children": [
           {
-            "id": "763d957158d81d34",
+            "id": "f569a34e41bb1189",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "工具使用手册/Linux.md",
+                "file": "编程之路/Servlets&JSP.md",
                 "mode": "source",
                 "source": false
               }
@@ -86,7 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "工具使用手册/Linux.md",
+                "file": "编程之路/Servlets&JSP.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "工具使用手册/Linux.md",
+                "file": "编程之路/Servlets&JSP.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "工具使用手册/Linux.md"
+                "file": "编程之路/Servlets&JSP.md"
               }
             }
           },
@@ -164,17 +164,17 @@
       "obsidian-excalidraw-plugin:新建 Excalidraw 绘图": false
     }
   },
-  "active": "763d957158d81d34",
+  "active": "f569a34e41bb1189",
   "lastOpenFiles": [
-    "语言/C.md",
-    "工具使用手册/Linux.md",
-    "语言/Html&CSS.md",
-    "迷你实验/OkHttp与Retrofit：从百度翻译获取结果.md",
-    "android/Android 基础篇.md",
-    "编程之路/计算机网络.md",
-    "语言/kotlin.md",
-    "真正的草稿/myPIDS.md",
-    "语言/JavaScript.md",
-    "语言/img/prototype.excalidraw.md"
+    "语言/Java.md",
+    "编程之路/Servlets&JSP.md",
+    "迷你实验/Activity之间传递Viewmodel.md",
+    "迷你实验/holder在哪里.md",
+    "迷你实验/Handler的初次探索.md",
+    "迷你实验/双层的RecyclerView.md",
+    "迷你实验/收手吧，Handler.md",
+    "迷你实验/点击事件.md",
+    "迷你实验/初探线程锁.md",
+    "迷你实验/230109 OkHttp与Retrofit：从百度翻译获取结果.md"
   ]
 }

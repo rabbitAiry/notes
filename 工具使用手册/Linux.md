@@ -220,17 +220,19 @@
 		- 归档：多个文件合并为一个
 		- `tar cvf archive.tar file1 file2 ...`
 			- 压缩多个文件
-			- c：创建文件
-			- v：显示详细的命令执行信息
-			- vv：显示文件大小和权限信息
-			- f：表示指定归档文件名
 		- `tar xvf archive.tar`
 			- 解压缩
-			- x：解压模式
-			- t：预览压缩包内容
 	- tar.gz格式（tgz格式）
-		- `tar ztvf file.tar.gz`
-			- z：运行gunzip
+		- `tar zxf file.tar.gz`
+			- 解压缩
+	- tar命令常用参数
+		- c：创建文件
+		- t：预览压缩包内容
+		- x：解压模式
+		- k：解压遇到已经存在的文件时，不要覆盖
+		- f：表示指定归档文件名
+		- z：运行gunzip
+		- v：显示详细的命令执行信息
 	- bz2格式
 		- 使用bzip2压缩、bunzip2解压缩
 	- xz格式
@@ -279,7 +281,7 @@
 		- `/info`
 			- 存放GNU帮助手册
 		- `/local`
-			- 管理员按照软件的地方
+			- 管理员安装软件的地方
 		- `/man`
 			- 存放用户手册
 		- `/share`
