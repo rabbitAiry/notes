@@ -13,7 +13,19 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "编程之路/Servlets&JSP.md",
+                "file": "工具使用手册/Linux.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "b6a532561a19f676",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "语言/C.md",
                 "mode": "source",
                 "source": false
               }
@@ -86,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "编程之路/Servlets&JSP.md",
+                "file": "工具使用手册/Linux.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "编程之路/Servlets&JSP.md",
+                "file": "工具使用手册/Linux.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "编程之路/Servlets&JSP.md"
+                "file": "工具使用手册/Linux.md"
               }
             }
           },
@@ -166,15 +178,15 @@
   },
   "active": "f569a34e41bb1189",
   "lastOpenFiles": [
-    "语言/Java.md",
+    "语言/C.md",
+    "工具使用手册/Linux.md",
+    "编程之路/操作系统.md",
+    "语言/kotlin.md",
+    "草稿/折腾ubuntu.md",
+    "android/JetpackCompose.md",
+    "真正的草稿/myPIDS.md",
     "编程之路/Servlets&JSP.md",
-    "迷你实验/Activity之间传递Viewmodel.md",
-    "迷你实验/holder在哪里.md",
-    "迷你实验/Handler的初次探索.md",
-    "迷你实验/双层的RecyclerView.md",
-    "迷你实验/收手吧，Handler.md",
-    "迷你实验/点击事件.md",
-    "迷你实验/初探线程锁.md",
-    "迷你实验/230109 OkHttp与Retrofit：从百度翻译获取结果.md"
+    "语言/Java.md",
+    "工具使用手册/git使用.md"
   ]
 }

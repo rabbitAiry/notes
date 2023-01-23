@@ -36,7 +36,7 @@ for(x in 1 until 100)println(x)
 for(x in 1..100 step 2)
 
 // 使用downTo进行逆序
-for(x in 15 downTo 1)println(x)
+for(x in 15 downTo 1)p                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         n(x)
 ```
 - 三种访问数组的形式 
 ```kotlin

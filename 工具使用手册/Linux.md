@@ -220,7 +220,7 @@
 		- 归档：多个文件合并为一个
 		- `tar cvf archive.tar file1 file2 ...`
 			- 压缩多个文件
-		- `tar xvf archive.tar`
+		- `tar xf archive.tar`
 			- 解压缩
 	- tar.gz格式（tgz格式）
 		- `tar zxf file.tar.gz`
@@ -510,3 +510,39 @@
 
 
 ## #17 在基础上搭建
+
+
+## #18 实际遇到的问题
+- 问题：文件被未被正确退出的进程锁住
+```sh
+E: 无法获得锁 /var/lib/dpkg/lock-frontend。锁正由进程 4887（apt-get）持有
+N: 请注意，直接移除锁文件不一定是合适的解决方案，且可能损坏您的系统。
+E: 无法获取 dpkg 前端锁 (/var/lib/dpkg/lock-frontend)，是否有其他进程正占用它？
+```
+- 解决方案
+	- 不断删除这些锁
+	- `sudo rm /var/lib/dpkg/lock-frontend`
+---
+- 问题：未满足依赖关系
+```sh
+下列软件包有未满足的依赖关系：
+ python3-distutils : 依赖: python3-lib2to3 (= 3.10.4-0ubuntu1) 但是 3.10.6-1~22.04 正要被安装
+E: 无法修正错误，因为您要求某些软件包保持现状，就是它们破坏了软件包间的依赖关系。
+```
+- 解决方案
+	- 使用aptitude进行安装，aptitude会给出不同的解决依赖的方案
+	- `sudo aptitude install python3-pip`
+---
+- 设置环境变量
+	- 非全局的方式
+		- `export **=**`
+	- 全局的方式
+		- 在`/etc/profile`文件中写下`export **=**`
+		- 激活
+```sh
+source /etc/profile
+source ~/.bashrc
+```
+---
+- 在Ubuntu22上使用旧版本Python
+[解决方案](https://zhuanlan.zhihu.com/p/506491209) 

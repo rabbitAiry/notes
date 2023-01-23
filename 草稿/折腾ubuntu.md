@@ -83,4 +83,8 @@ sudo systemctl status clash
 ```
 
 ###### 方法2：使用clash_for_windows
-- [在此](https://github.com/Fndroid/clash_for_windows_pkg/releases/tag/0.17.1)找到对应版本的clash文件（我没能成功使用）
+- [在此](https://github.com/Fndroid/clash_for_windows_pkg/releases/tag/0.17.1)找到对应版本的clash文件后下载（不知道为什么我在使用时报错了，后来我选择在gnome的应用商店里下载是可以基本正常运作的，除了无法开机自启动）
+
+### 调整GNU/Grub等待时间
+- 打开`/etc/default/grub`，修改GRUB_TIMEOUT的值，保存
+- 执行`update-grub`
