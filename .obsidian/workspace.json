@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "工具使用手册/Linux.md",
+                "file": "android/JetpackCompose.md",
                 "mode": "source",
                 "source": false
               }
@@ -25,13 +25,14 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "语言/C.md",
+                "file": "真正的草稿/myPIDS.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -98,7 +99,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "工具使用手册/Linux.md",
+                "file": "真正的草稿/myPIDS.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +116,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "工具使用手册/Linux.md",
+                "file": "真正的草稿/myPIDS.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +139,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "工具使用手册/Linux.md"
+                "file": "真正的草稿/myPIDS.md"
               }
             }
           },
@@ -176,15 +177,15 @@
       "obsidian-excalidraw-plugin:新建 Excalidraw 绘图": false
     }
   },
-  "active": "f569a34e41bb1189",
+  "active": "b6a532561a19f676",
   "lastOpenFiles": [
+    "语言/kotlin.md",
+    "android/JetpackCompose.md",
+    "真正的草稿/myPIDS.md",
     "语言/C.md",
     "工具使用手册/Linux.md",
     "编程之路/操作系统.md",
-    "语言/kotlin.md",
     "草稿/折腾ubuntu.md",
-    "android/JetpackCompose.md",
-    "真正的草稿/myPIDS.md",
     "编程之路/Servlets&JSP.md",
     "语言/Java.md",
     "工具使用手册/git使用.md"

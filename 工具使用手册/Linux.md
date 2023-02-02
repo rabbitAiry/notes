@@ -546,3 +546,18 @@ source ~/.bashrc
 ---
 - 在Ubuntu22上使用旧版本Python
 [解决方案](https://zhuanlan.zhihu.com/p/506491209) 
+```sh
+# 安装
+sudo apt install gcc build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libbz2-dev liblzma-dev sqlite3 libsqlite3-dev tk-dev uuid-dev libgdbm-compat-dev
+
+# 下载、解压并进入Python-3.x目录
+# 编译
+sudo ./configure --enable-optimizations --with-lto --enable-shared
+sudo make
+sudo make altinstall
+
+# 链接动态库
+# 补充：直接使用`python3.7 --version`会报错，告知某个动态库无法啊加载。因此需要创建符号链接
+sudo ln -s /usr/local/lib/libpython3.7m.so.1.0 /usr/lib
+
+```

@@ -5,20 +5,18 @@
 #### 配置
 - 使用 `setContent` 来定义布局
 ```Kotlin
-class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            BasicsCodelabTheme {
-                Surface(
-                  modifier = Modifier.fillMaxSize(),
-                  color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
-                }
-            }
-        }
-    }
+override fun onCreate(savedInstanceState: Bundle?) {
+	super.onCreate(savedInstanceState)
+	setContent {
+		BasicsCodelabTheme {
+			Surface(
+			  modifier = Modifier.fillMaxSize(),
+			  color = MaterialTheme.colors.background
+			) {
+				Greeting("Android")
+			}
+		}
+	}
 }
 ```
 - 预览
@@ -36,6 +34,47 @@ fun DefaultPreview() {
         Greeting(name = "Android")
     }
 }
+```
+
+
+## 常用组件
+#### 文本和空间
+- Modifier属性
+	- [修饰符列表](https://developer.android.google.cn/jetpack/compose/modifiers-list) 
+	- 常见
+		- heightIn：描述高度，包括最大最小值
+- Surface
+	- shape
+		- 使得该Composable内所有元素都绘制在该形状之内
+- Divider：分割线
+- Spacer：留白
+- Text
+```Kotlin
+Text(
+	text = name,
+	style = MaterialTheme.typography.h4.copy(
+		fontWeight = FontWeight.ExtraBold
+	)
+)
+```
+- TextField
+
+#### 处理图片
+- 使用painterResourse得到drawable中的图片
+- clip：图片容器，比如圆形
+- contentScale：图片缩放程度
+	- fit：能够看到整张图片
+	- fillBounds：拉伸图片使得占满容器
+	- Crop：放大图片使得占满容器
+```Kotlin
+Image(
+	painter = painterResource(R.drawable.ab1_inversions),
+	contentDescription = null,
+	contentScale = ContentScale.Crop,
+	modifier = Modifier
+		.size(88.dp)
+		.clip(CircleShape)
+)
 ```
 
 
@@ -315,12 +354,29 @@ Column(modifier = modifier) {
 
 ## 动画
 #### animate\*AsState
-- 使用 `animate*AsState` 创建的任何动画都是可中断的
-- 为属性设置动画示例
-	- 属性由animateDpAsState委托
-	- 使用`animationSpec` 参数自定义动画
-	- 确保值不小于0：使用`coerceAtLeast(0.dp)`
+- 使用 `animate*AsState` 委托的任何动画都是可中断的，包括
+	- animateColorAsState
+	- animateDpAsState
+```kotlin
+val bgColor by animateColorAsState(
+	if (tabPage==TabPage.Home) Purple100 else Green300
+)
+```
+- 使用`animationSpec`参数指定动画的属性，包括
+	- keyFrames
+		- 以设置关键帧的形式设置动画
+		- 使用如下方式设置关键帧
+	- tween
+	- spring
 ```Kotlin
+// keyFrames
+animation = keyframes {
+   durationMillis = 1000
+   0.7f at 500
+   0.9f at 800
+}
+
+// how to use
 var expanded by remember { mutableStateOf(false) }
 val extraPadding by animateDpAsState(
 	if (expanded) 48.dp else 0.dp, 
@@ -329,1463 +385,296 @@ val extraPadding by animateDpAsState(
 		stiffness = Spring.StiffnessLow
 	)
 )
-...
-Column(modifier = Modifier
-	.weight(1f)
-	.padding(bottom = extraPadding.coerceAtLeast(0.dp))
-```
-
-#### content动画
-```Kotlin
-@Composable
-private fun CardContent(name: String) {
-    var expanded by remember { mutableStateOf(false) }
-    Row(
-        modifier = Modifier
-            .padding(12.dp)
-            .animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            )
-    ) {
-    ...
-```
-
-
-## 部件
-#### Modifier属性
-- [修饰符列表](https://developer.android.google.cn/jetpack/compose/modifiers-list) 
-- 常见
-	- heightIn：描述高度，包括最大最小值
-
-#### Surface
-- shape
-	- 使得该Composable内所有元素都绘制在该形状之内
-
-#### 文本
-- Text
-```Kotlin
-Text(
-	text = name,
-	style = MaterialTheme.typography.h4.copy(
-		fontWeight = FontWeight.ExtraBold
-	)
-)
-```
-- TextField
-
-#### 图片
-- 使用painterResourse得到drawable中的图片
-- clip：图片容器，比如圆形
-- contentScale：图片缩放程度
-	- fit：能够看到整张图片
-	- fillBounds：拉伸图片使得占满容器
-	- Crop：放大图片使得占满容器
-```Kotlin
-Image(
-	painter = painterResource(R.drawable.ab1_inversions),
-	contentDescription = null,
-	contentScale = ContentScale.Crop,
+Column(
 	modifier = Modifier
-		.size(88.dp)
-		.clip(CircleShape)
+		.weight(1f)
+		.padding(bottom=Math.max(extraPadding, 0.dp)
 )
 ```
 
-#### 其他
-- Divider：分割线
-- Spacer：留白
-
-
-
-------
-## 旧笔记
-
-## 布局
-##### 继续设置样式
-
-- 设置字重和字体透明度
-
-  - 通过传递数据给CompositionLocalProvider可以获得一些属性
-
-  ```kotlin
-  @Composable
-  fun PhotographerCard() {
-      Column {
-          Text("Alfred Sisley", fontWeight = FontWeight.Bold)
-          // LocalContentAlpha is defining opacity level of its children
-          CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-              Text("3 minutes ago", style = MaterialTheme.typography.body2)
-          }
-      }
-  }
-  ```
-
-- 展示图片框（placeholder）
-
-  - 使用Surface并指定一个圆形
-  - 在图片加载时可以看到placeholder
-
-  ```kotlin
-  Surface(
-      modifier = Modifier.size(50.dp),
-      shape = CircleShape,
-      color = MaterialTheme.colors.onSurface.copy(alpha = 0.2f)
-  ) {
-      // Image goes here
-  }
-  ```
-  
-- 自定义你的composable
-
-  - 第一个参数应该为modifier
-
-  ```kotlin
-  @Composable
-  fun PhotographerCard(modifier: Modifier = Modifier) {
-      Row(modifier) { ... }
-  }
-  ```
-
-- 要留意modifiers串联起来（chain）的顺序
-
-  - 先padding后clickable：此时会出现padding区域不可被点击（无响应）
-
-    ```kotlin
-    @Composable
-    fun PhotographerCard(modifier: Modifier = Modifier) {
-        Row(modifier
-            .padding(16.dp)
-            .clickable(onClick = { /* Ignoring onClick */ })
-        ) {
-            ...
-        }
-    }
-    ```
-
-##### compose组件中加入布局（Slot APIs）
-
-- 例如：为一个button添加logo与文字
-
-  - 旧的表达方式可读性差
-
-    ```kotlin
-    Button(
-        text = "Button",
-        icon: Icon? = myIcon,
-        textStyle = TextStyle(...),
-        spacingBetweenIconAndText = 4.dp,
-        ...
-    )
-    ```
-
-  - 可以添加布局
-
-    ```kotlin
-    Button {
-        Row {
-            MyImage()
-            Spacer(4.dp)
-            Text("Button")
-        }
-    }
-    ```
-
-##### 列表lists
-- 使用LazyColumn：只渲染可见项目
-  - 在preview中看起来都一样
-
-  ```kotlin
-  @Composable
-  fun LazyList() {
-      // We save the scrolling position with this state that can also 
-      // be used to programmatically scroll the list
-      val scrollState = rememberLazyListState()
-  
-      LazyColumn(state = scrollState) {
-          items(100) {
-              Text("Item #$it")
-          }
-      }
-  }
-  ```
-
-- 远程获取并在列表中展示图片 使用第三方库Coil或Glide
-
-  - 不使用第三方库的步骤：下载图片》译码为bitmap》在Image中将其渲染。使用第三方库可以一步到位
-
-  - 添加依赖、联网权限
-
-    - 使用coil出错，未知原因
-
-    ```
-    implementation "com.google.accompanist:accompanist-glide:0.10.0"
-    ```
-
-    ```xml
-    <uses-permission android:name="android.permission.INTERNET" />
-    ```
-
-  - 子项目。最后在lazycolumn中调用
-
-    ```kotlin
-    @Composable
-    fun ImageListItem(index: Int) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-    
-            Image(
-                painter = rememberGPainter(
-                    request = "https://developer.android.com/images/brand/Android_Robot.png"
-                ),
-                contentDescription = "Android Logo",
-                modifier = Modifier.size(50.dp)
-            )
-            Spacer(Modifier.width(10.dp))
-            Text("Item #$index", style = MaterialTheme.typography.subtitle1)
-        }
-    }
-    ```
-
-- 控制划动
-
-  - 为了防止滚动过程中会卡顿，使用了协程(Coroutine)的CoroutineScope
-  - 使用scrollState.animateScrollToItem(0)控制位置
-
-  ```kotlin
-  // 替代SimpleList
-  @Composable
-  fun ScrollingList() {
-      val listSize = 100
-      // We save the scrolling position with this state
-      val scrollState = rememberLazyListState()
-      // We save the coroutine scope where our animated scroll will be executed
-      val coroutineScope = rememberCoroutineScope()
-  
-      Column {
-          Row {
-              Button(onClick = {
-                  coroutineScope.launch {
-                      // 0 is the first item index
-                      scrollState.animateScrollToItem(0)
-                  }
-              }) {
-                  Text("Scroll to the top")
-              }
-  
-              Button(onClick = {
-                  coroutineScope.launch {
-                      // listSize - 1 is the last index of the list
-                      scrollState.animateScrollToItem(listSize - 1)
-                  }
-              }) {
-                  Text("Scroll to the end")
-              }
-          }
-  
-          LazyColumn(state = scrollState) {
-              items(listSize) {
-                  ImageListItem(it)
-              }
-          }
-      }
-  }
-  ```
-
-  
-
-##### 自定义布局
-
-> 在View system中，自定义布局需要继承自ViewGroup，但在Compose中，只需要创建一个使用Layout Composable的函数即可
-
-- Compose UI只允许为子元素测量一次
-
-- 使用layout modifier》添加属性：在Modifier中添加新属性，使得padding的计算为顶部到字的baseline
-
-  - 架构：有两个lambda参数
-    - measurable 被测量和放置的子元素
-    - constraints 子元素的宽、高最大值与最小值
-
-  ```kotlin
-  fun Modifier.customLayoutModifier(...) = Modifier.layout { measurable, constraints ->
-    ...
-  })
-  ```
-
-  - 先是测量这个部件大小，通过调用`measure`方法，这会返回一个`Placeable`，用于定位
-  - 然后计算这个部件的位置，通过调用`layout(width,height)`
-    - 最后通过调用`placeable.placeRelative(x,y)`以展示这个部件
-
-  ```kotlin
-  @Composable
-  fun Modifier.firstBaselineToTop(
-      firstBaselineToTop:Dp
-  ) = this.then(
-      layout { measurable, constraints ->
-          val placeable = measurable.measure(constraints)
-  
-          check(placeable[FirstBaseline]!=AlignmentLine.Unspecified)
-          val firstBaseline = placeable[FirstBaseline]
-  
-          val placeableY = firstBaselineToTop.roundToPx() - firstBaseline
-          val height = placeable.height + placeableY
-          layout(placeable.width,height){
-              placeable.placeRelative(0,placeableY)
-          }
-      }
-  )
-  ```
-
-  - 调用这个属性
-
-  ```kotlin
-  @Composable
-  fun TextWithPaddingToBaselinePreview() {
-    LayoutsCodelabTheme {
-      Text("Hi there!", Modifier.firstBaselineToTop(32.dp))
-    }
-  }
-  ```
-
-- 使用Layout Coposable》
-
-  - 可以控制测量、摆放方式
-  - 架构：需要两个参数
-    - modifier
-    - content
-
-  ```kotlin
-  @Composable
-  fun CustomLayout(
-      modifier: Modifier = Modifier,
-      // custom layout attributes 
-      content: @Composable () -> Unit
-  ) {
-      Layout(
-          modifier = modifier,
-          content = content
-      ) { measurables, constraints ->
-          // measure and position children given constraints logic here
-      }
-  }
-  ```
-
-  - 先测量大小，再设置位置，但这次用的是列表（多个子元素）
-  
-  ```kotlin
-  @Composable
-  fun MyOwnColumn(
-      modifier: Modifier = Modifier,
-      content: @Composable () -> Unit
-  ) {
-      Layout(
-          modifier = modifier,
-          content = content
-      ) { measurables, constraints ->
-          // Don't constrain child views further, measure them with given constraints
-          // List of measured children
-          val placeables = measurables.map { measurable ->
-              // Measure each child
-              measurable.measure(constraints)
-          }
-  
-          // Track the y co-ord we have placed children up to
-          var yPosition = 0
-  
-          // Set the size of the layout as big as it can
-          layout(constraints.maxWidth, constraints.maxHeight) {
-              // Place children in the parent layout
-              placeables.forEach { placeable ->
-                  // Position item on the screen
-                  placeable.placeRelative(x = 0, y = yPosition)
-  
-                  // Record the y co-ord placed up to
-                  yPosition += placeable.height
-              }
-          }
-      }
-  }
-  
-  ```
-
-
-
-##### 自定义布局：复杂点的
-
-> 自定义一个StaggeredGrid，用于制作一个横向瀑布流的多按钮（checkbox）
-
-- 从模板开始制作布局，依然先测量大小，再放置
-
-  ```kotlin
-  @Composable
-  fun StaggeredGrid(
-      modifier:Modifier=Modifier,
-      rows:Int=3,
-      content:@Composable () -> Unit
-  ){
-      Layout(
-  //        children = children,
-          modifier = modifier,
-          content = content
-      ){measurables,constraints ->
-          val rowWidths = IntArray(rows){0}
-          val rowHeights = IntArray(rows){0}
-          val placeables = measurables.mapIndexed{index,measurable ->
-              val placeable = measurable.measure(constraints)
-              val row = index % rows
-              rowWidths[row] += placeable.width
-              rowHeights[row] = max(rowHeights[row],placeable.height)
-              placeable
-          }
-  
-          val width = rowWidths.maxOrNull()
-              ?.coerceIn(constraints.minWidth.rangeTo(constraints.maxWidth))?:constraints.minWidth
-          val height = rowHeights.sumBy{ it }
-              .coerceIn(constraints.minHeight.rangeTo(constraints.maxHeight))
-  
-          val rowY = IntArray(rows){0}
-          for(i in 1 until rows){
-              rowY[i] = rowY[i-1] + rowHeights[i-1]
-          }
-  
-          layout(width,height){
-              val rowX = IntArray(rows){0}
-              placeables.forEachIndexed{index,placeable ->
-                  val row = index%rows
-                  placeable.placeRelative(
-                      x = rowX[row],
-                      y = rowY[row]
-                  )
-                  rowX[row] += placeable.width
-              }
-          }
-  
-      }
-  }
-  ```
-
-- 调用这个布局
-
-  ```kotlin
-  val topics = listOf(
-      "Arts & Crafts", "Beauty", "Books", "Business", "Comics", "Culinary",
-      "Design", "Fashion", "Film", "History", "Maths", "Music", "People", "Philosophy",
-      "Religion", "Social sciences", "Technology", "TV", "Writing"
-  )
-  
-  @Composable
-  fun BodyContentGrid(modifier: Modifier = Modifier){
-      StaggeredGrid(modifier = modifier) {
-          for(topic in topics){
-              // ...
-          }
-      }
-  }
-  ```
-
-##### Layout modifiers的原理
-
-- padding modifier的源码
-
-  - width和height是加上padding后的值
-
-  ```kotlin
-  // How to create a modifier
-  @Stable
-  fun Modifier.padding(all: Dp) =
-      this then PaddingModifier(start = all, top = all, end = all, bottom = all, rtlAware = true)
-  
-  // Implementation detail
-  private class PaddingModifier(
-      start: Dp = 0.dp,
-      top: Dp = 0.dp,
-      end: Dp = 0.dp,
-      bottom: Dp = 0.dp,
-      rtlAware: Boolean
-  ) : LayoutModifier {
-      override fun MeasureScope.measure(
-          measurable: Measurable,
-          constraints: Constraints
-      ): MeasureScope.MeasureResult {
-          val horizontal = start.roundToPx() + end.roundToPx()
-          val vertical = top.roundToPx() + bottom.roundToPx()
-  
-          val placeable = measurable.measure(constraints.offset(-horizontal, -vertical))
-  
-          val width = constraints.constrainWidth(placeable.width + horizontal)
-          val height = constraints.constrainHeight(placeable.height + vertical)
-          return layout(width, height) {
-              if (rtlAware) {
-                  placeable.placeRelative(start.roundToPx(), top.roundToPx())
-              } else {
-                  placeable.place(start.roundToPx(), top.roundToPx())
-              }
-          }
-      }
-  }
-  ```
-
-- modifier的顺序确实影响效果
-
-  - 会影响的内容：比如布局长宽，可以用背景和内容来验证
-
-##### ConstraintLayout
-
-- 在gradle中添加
-
-  ```
-  implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha07"
-  ```
-
-- 初始化组件之间联系（reference）的方法：`createRefs()`
-
-- 建立与parent联系的方法：`linkTo()`
-
-- 指定自身为参考物的方法：`constrainAs()`
-
-- 例》Text在Button下方
-
-  ```kotlin
-  @Composable
-  fun ConstraintLayoutContent() {
-      ConstraintLayout {
-  
-          // Create references for the composables to constrain
-          val (button, text) = createRefs()
-  
-          Button(
-              onClick = { /* Do something */ },
-              // Assign reference "button" to the Button composable
-              // and constrain it to the top of the ConstraintLayout
-              modifier = Modifier.constrainAs(button) {
-                  top.linkTo(parent.top, margin = 16.dp)
-              }
-          ) {
-              Text("Button")
-          }
-  
-          // Assign reference "text" to the Text composable
-          // and constrain it to the bottom of the Button composable
-          Text("Text", Modifier.constrainAs(text) {
-              top.linkTo(button.bottom, margin = 16.dp)
-          })
-      }
-  }
-  
-  @Preview
-  @Composable
-  fun ConstraintLayoutContentPreview() {
-      LayoutsCodelabTheme {
-          ConstraintLayoutContent()
-      }
-  }
-  ```
-
-  - 让文字居中：use the `centerHorizontallyTo` function 
-
-    ```kotlin
-    Text("Text", Modifier.constrainAs(text) {
-                top.linkTo(button.bottom, margin = 16.dp)
-                // Centers Text horizontally in the ConstraintLayout
-                centerHorizontallyTo(parent)
-            })
-    ```
-
-- 使用更多ConstraintLayout属性
-
-  - barrier：自适应的布局无形的分割线（比如中文切换为英文时，布局也不会改变）
-
-  ```kotlin
-  @Composable
-  fun LargeConstraintLayout() {
-      ConstraintLayout {
-          // ...
-          val barrier = createEndBarrier(button1, text)
-          Button(
-              onClick = { /* Do something */ },
-              modifier = Modifier.constrainAs(button2) {
-                  top.linkTo(parent.top, margin = 16.dp)
-                  start.linkTo(barrier)
-              }
-          ) { 
-              Text("Button 2") 
-          }
-      }
-  }
-  ```
-
-  - dimension：位置不够时自动换行。例子中修改了width
-
-  ```kotlin
-  @Composable
-  fun LargeConstraintLayout() {
-      ConstraintLayout {
-          val text = createRef()
-  
-          val guideline = createGuidelineFromStart(0.5f)
-          Text(
-              "This is a very very very very very very very long text",
-              Modifier.constrainAs(text) {
-                  linkTo(guideline, parent.end)
-                  width = Dimension.preferredWrapContent
-              }
-          )
-      }
-  }
-  ```
-
-- 解耦api（Decoupled API）
-
-##### Intrinsics(固有）
-
-- intrinsics可以让你在唯一一次测量前选择测量子项目的大小的方式
-
-  - 下例为获取子项目高度的最小值
-
-  ```kotlin
-  Row(modifier = modifier.height(IntrinsicSize.Min)) {
-  	// ...
-  }
-  ```
-
-
-
-
-[TOC]
-
-### 主题
-
-##### Material主题
-
--   颜色含义
-
-    -   primary：主颜色
-    -   secondary：强调色
-    -   on系列：对应颜色的content所使用的颜色
-        -   相同颜色下的on颜色必须相同
-        -   例：若primary的颜色和surface一样，则onPrimary必须和onSurface的颜色相同
-    -   [material官网颜色工具](https://material.io/resources/color/) 
-
--   文字颜色会自动改变
-
-    -   使用primary作为背景色，则文本颜色会自动选择onPrimary
-
-    ```kotlin
-    // before
-    Surface(color = MaterialTheme.colors.background) {
-        Greeting("Android")
-    }
-    
-    // after changed
-    Surface(color = MaterialTheme.colors.primary) {
-        Text (text = "Hello $name!")
-    }
-    ```
-
--   文字特性
-
-    ![](https://developer.android.google.cn/codelabs/jetpack-compose-theming/img/767fd40cb6938dc4.png)
-
--   基于文字特性的修改
-
-    ```kotlin
+#### 内容动画
+- 自动根据内容大小发生动画改变
+```Kotlin
+var expanded by remember { mutableStateOf(false) }
+Row(
+	modifier = Modifier
+		.padding(12.dp)
+		.animateContentSize(
+			animationSpec = spring(
+				dampingRatio = Spring.DampingRatioMediumBouncy,
+				stiffness = Spring.StiffnessLow
+			)
+		)
+) {/* ... */}
+```
+
+#### 可见性变化动画
+- 当某个部件动画效果为“不可见->可见”，那么可以使用AnimatedVisibility添加动画
+	- 使用enter、exit参数调整动画效果，参数值如slideInVertically等
+	- 为参数值设置initialOffsetX、animatioSpec等参数进一步调整动画效果
+```kotlin
+AnimatedVisibility(extended) {
     Text(
-        text = name,
-        style = MaterialTheme.typography.h4.copy(
-            fontWeight = FontWeight.ExtraBold
-        )
+        text = stringResource(R.string.edit),
+        modifier = Modifier
+            .padding(start = 8.dp, top = 3.dp)
     )
-    ```
+}
+```
 
--   亮色主题下
+#### Transition API
+- 使用Transition API制作更复制的动画，它可以添加多个动画效果
+```kotlin
+val transition = updateTransition(
+    tabPage,
+    label = "Tab indicator"
+)
 
-    -   primary（军蓝色）：toolbar背景颜色，button文字颜色
-    -   surface（浅蓝色）：button颜色
+val indicatorLeft by transition.animateDp(
+    transitionSpec = {
+        if(TabPage.Home isTransitioningTo TabPage.Work){
+            spring(stiffness = Spring.StiffnessVeryLow)
+        } else {
+            spring(stiffness = Spring.StiffnessMedium)
+        }
+    },
+    label = "Indicator left"
+) { page ->
+    tabPositions[page.ordinal].left
+}
+val indicatorRight by transition.animateDp(
+    transitionSpec = {
+        if(TabPage.Home isTransitioningTo TabPage.Work){
+            spring(stiffness = Spring.StiffnessMedium)
+        } else {
+			spring(stiffness = Spring.StiffnessVeryLow)
+        }
+    },
+    label = "Indicator right"
+) { page ->
+    tabPositions[page.ordinal].right
+}
+val color by transition.animateColor(
+    label = "Border color"
+) { page ->
+    if (page == TabPage.Home) Purple700 else Green800
+}
+```
 
-    <img src="image/light_theme.jpg" style="zoom:33%;" />
-
--   暗色主题下
-
-    -   primary（军蓝色）：button文字颜色
-    -   surface（浅蓝色）：toolbar背景颜色，button颜色
-
-    <img src="image/dark_theme.jpg" style="zoom:33%;" />
-    
--   预览暗色主题
-
-    ```kotlin
-    @Preview(
-        showBackground = true,
-        widthDp = 320,
-        uiMode = UI_MODE_NIGHT_YES,
-        name = "DefaultPreviewDark"
+#### 无限期动画
+- 使用`InfiniteTransition`无限期地为值添加动画效果
+	- 通常，加载效果使用一些持续变化透明度的图形来表示
+```kotlin
+val infiniteTransition = rememberInfiniteTransition()
+val alpha by infiniteTransition.animateFloat(
+    initialValue = 0f,
+    targetValue = 1f,
+    animationSpec = infiniteRepeatable(
+        animation = keyframes {
+            durationMillis = 1000
+            0.7f at 500
+        },
+        repeatMode = RepeatMode.Reverse
     )
-    @Preview(showBackground = true, widthDp = 320)
-    @Composable
-    fun DefaultPreview() {
-        BasicsCodelabTheme {
-            Greetings()
-        }
+)
+```
+
+#### 手势动画
+
+## Navigation
+#### 创建导航图
+- 使用依赖
+```groovy
+dependencies{
+	implementation "androidx.navigation:navigation-compose:2.5.0-rc01"
+	// ...
+}
+```
+- 设置Navigation的3个主要部分
+	- NavController
+		- 导航的核心组件
+		- 通过调用 `rememberNavController()` 函数获取，并将其放置在可组合项层次结构的顶层
+	- NavHost
+		- 充当容器，负责显示导航图的当前目的地
+	- NavGraph
+		- 标出能够在其间进行导航的可组合目的地
+		- 通过自定义的、唯一的字符串来表示不同的目的地
+```kotlin
+val navController = rememberNavController()
+Scaffold(...) { innerPadding ->
+	NavHost(
+	    navController = navController,
+	    startDestination = Overview.route,
+	    modifier = Modifier.padding(innerPadding)
+	) {
+	    composable(route = Overview.route) {
+	        Overview.screen()
+	    }
+	    composable(route = Accounts.route) {
+	        Accounts.screen()
+	    }
+	    composable(route = Bills.route) {
+	        Bills.screen()
+	    }
+	}
+}
+```
+
+#### 连接、属性设置
+- 触发导航
+```kotlin
+navController.navigate(newScreen.route)
+```
+- 栈顶不重复（SingleTop）
+```Kotlin
+navController.navigate(route) {
+	launchSingleTop = true 
+}
+```
+- 按下返回时，总是返回到导航图的起始目的地
+```Kotlin
+popUpTo(this@navigateSingleTopTo.graph.findStartDestination().id) {  
+    saveState = true  
+}
+```
+- 发生导航切换时，保存状态
+```Kotlin
+navController.navigate(route) {
+	restoreState = true
+}
+```
+- 推荐的做法
+	- 如果存在多数或所有的导航切换都使用统一配置，那么可以通过扩展函数使得代码更简洁
+```Kotlin
+fun NavHostController.navigateSingleTopTo(route: String) =  
+    this.navigate(route) {  
+        popUpTo(this@navigateSingleTopTo.graph.findStartDestination().id) {  
+            saveState = true  
+        }  
+        launchSingleTop = true  
+        restoreState = true  
     }
-    ```
-
-    
-
-
-
-##### Compose的记忆memory
-
-- localContentColor：为icon和typography设置颜色
-
-- 复用组件也是一个recomposition的过程（如LazyColumn）
-
-- Compose树
-
-  - Compose会生成树：第一次运行时，Compose构造一棵树；重组时，更新树
-
-- 副作用side-effect
-
-  - 副作用是在 非composable运行过程中出现的视觉效果变化
-
-    ```
-    比如在第一个实验的LazyColumn中，被选中变红色背景的项目，在划动后不再为红色背景；
-    又比如这个实验中，每次添加新的todo到列表时，icon的颜色都会变化
-    ```
-
-  - 如：在ViewModel中使用state、调用Random.nextInt()、或者进行数据库操作，这些都是副作用
-
-  - 重组过程理应不出现side-effect
-
-- 让composable拥有memory
-
-  - remember提供了composable的memory
-  
-    ```kotlin
-    remember(todo.id) { randomTint() }
-    // 小括号内是关键参数，是给remember提供位置
-    // 大括号内是lambda表达式，用于计算新的被remembered的值
-    // 第一次运行时会记住该值，之后则会记住该值
-    ```
-  
-  - 使用remember的composable 的remember值 会在移除时被遗忘（比如LazyColumn中划出了屏幕后）
-  
-  - 短暂的动画效果就适合在LazyColumn的子中使用remember，但其他就不适合
-
-##### Compose的state
-
-- 输入文字：在View系统中的EditText相当于Compose的TextField，但是TextField可以选择是有状态或者无状态的
-
-- mutableStateOf
-
-  - 自动为`MutableState`对象生成 getter 和 setter，是内置于 compose 中的可观察状态者，它会在更新时告诉 compose
-
-  - 添加导入
-
-    ```kotlin
-    import androidx.compose.runtime.mutableStateOf
-    import androidx.compose.runtime.getValue
-    import androidx.compose.runtime.setValue
-    ```
-
-  - 声明MutableState的三种方式
-
-    ```java
-    val state = remember { mutableStateOf(default) }
-    var value by remember { mutableStateOf(default) }
-    val (value, setValue) = remember { mutableStateOf(default) }
-    ```
-
-- 有状态的TextField
-
-  - 使用mutableStateOf为它保存状态，使用remember记住有这个状态
-  - 虽然有状态的TextField能够重组ui，看到输入的文字，但是这个状态（输入的文字）不能被其他组件共享、获取
-
-  ```kotlin
-  @Composable
-  fun SimpleFilledTextField() {
-      var text by remember { mutableStateOf("Hello") }
-  
-      TextField(
-          value = text,
-          onValueChange = { text = it },
-          label = { Text("Label") }
-      )
-  }
-  ```
-
-- 无状态的TextField
-
-  - 使用状态提升（state hoisting）可以解决上述问题，状态提升至父Composable，使得子变成无状态的
-  - 状态提升通常用到这两个参数：value、onValueChange
-  - `by`是 Kotlin 中的属性委托语法
-  - 状态提升带来的特性：单一来源、封装的（只有上层能够修改状态）、可共享、可接受或忽略变化、解耦（自动更新）
-
-  ```kotlin
-  @Composable
-  fun TodoItemInput(onItemComplete: (TodoItem) -> Unit) {
-     val (text, setText) = remember { mutableStateOf("") }
-     Column {
-         Row(Modifier
-             .padding(horizontal = 16.dp)
-             .padding(top = 16.dp)
-         ) {
-             TodoInputTextField(
-                 text = text,
-                 onTextChange = setText,
-                 modifier = Modifier
-                     .weight(1f)
-                     .padding(end = 8.dp)
-             )
-             TodoEditButton(
-                 onClick = { /* todo */ },
-                 text = "Add",
-                 modifier = Modifier.align(Alignment.CenterVertically)
-             )
-         }
-     }
-  }
-  @Composable
-  fun TodoInputTextField(text: String, onTextChange: (String) -> Unit, modifier: Modifier) {
-     // ...
-  }
-  ```
-
-- 设置button：发送event`onItemComplete()`、清空文本、文本非空时允许添加
-
-  ```kotlin
-  TodoEditButton(
-     onClick = {
-         onItemComplete(TodoItem(text)) // send onItemComplete event up
-         setText("") // clear the internal text
-     },
-     text = "Add",
-     modifier = Modifier.align(Alignment.CenterVertically),
-     enabled = text.isNotBlank() // enable if text is not blank
-  )
-  ```
-
-##### 基于state的动态数据
-
-- 应用场景：TextField非空时展开Row，点击Row中的button以确认Todo属性
-
-  - 新增Row是否可见的布尔型变量（而不是状态，两个状态任意造成不同步）
-
-  - 新增状态icon用于保存当前选定的图标
-
-    ```kotlin
-       val (icon, setIcon) = remember { mutableStateOf(TodoIcon.Default)}
-       val iconsVisible = text.isNotBlank()
-    ```
-
-- 重组可以根据数据变化改变树的结构
-
-- 使用 imeAction 完成设计（输入法编辑器）
-
-  - 键盘的submit按钮要和界面上的submit按钮发挥同一作用，可以通过复制代码完成，亦或是：使用lambda函数`submit`
-
-    ```kotlin
-    val submit = {
-        // ...
-    }
-    onImeAction = submit
-    // ...
-    onClick = submit
-    ```
-
-- TextField提供对键盘输入的参数
-
-  - `keyboardOptions` - 用于启用显示完成 IME 操作
-  - `keyboardActions`- 用于指定响应触发的特定 IME 操作而触发的操作 - 在我们的例子中，一旦按下 Done，我们希望`submit`被调用并隐藏键盘
-  - 控制软键盘：使用`LocalSoftwareKeyboardController.current`，这是个实验性API，还必须用`@OptIn(ExperimentalComposeUiApi::class)`
-
-  ```kotlin
-  @OptIn(ExperimentalComposeUiApi::class)
-  @Composable
-  fun TodoInputText(
-      // ...
-  ) {
-      val keyboardController = LocalSoftwareKeyboardController.current
-      TextField(
-          // ...
-          keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-          keyboardActions = KeyboardActions(onDone = {
-              onImeAction()
-              keyboardController?.hideSoftwareKeyboard()
-          }),
-          modifier = modifier
-      )
-  }
-  ```
-
-##### 在ViewModel中使用State
-
-> 这一小节包含了四步
->
-> 状态分离》
->
-> 在ViewModel中使用State（配置ViewModel）》
->
-> 在ViewModel中测试State》
->
-> 复用无状态组合》
-
-- 应用场景：当点击Todo项目时可进入修改状态
-
-- 状态分离》提取无状态的composables
-
-  - 将有状态的Composable转换为无状态的Composable。无状态的Composable上层/入口都在有状态的Composable中
-
-  ```kotlin
-  @Composable
-  fun TodoItemEntryInput(onItemComplete: (TodoItem) -> Unit) {
-     val (text, setText) = remember { mutableStateOf("") }
-     val (icon, setIcon) = remember { mutableStateOf(TodoIcon.Default)}
-     val iconsVisible = text.isNotBlank()
-     val submit = {
-         onItemComplete(TodoItem(text, icon))
-         setIcon(TodoIcon.Default)
-         setText("")
-     }
-     TodoItemInput(
-         text = text,
-         onTextChange = setText,
-         icon = icon,
-         onIconChange = setIcon,
-         submit = submit,
-         iconsVisible = iconsVisible
-     )
-  }
-  
-  @Composable
-  fun TodoItemInput(
-     // ...
-  ) {
-     Column {
-         // ...
-     }
-  }
-  ```
-
-- 配置ViewModel
-
-  - ViewModel可以减轻很多作为Observer的工作量
-
-  - 增删
-
-    ```kotlin
-    var todoItems: List<TodoItem> by mutableStateOf(listOf())
-       private set
-    
-    // event: addItem
-    fun addItem(item: TodoItem) {
-        todoItems = todoItems + listOf(item)
-    }
-    
-    // event: removeItem
-    fun removeItem(item: TodoItem) {
-       // toMutableList makes a mutable copy of the list we can edit, then
-       // assign the new list to todoItems (which is still an immutable list)
-       todoItems = todoItems.toMutableList().also {
-           it.remove(item)
-       }
-    }
-    ```
-
-  - 在Activity中使用ViewModel
-
-    ```kotlin
-    @Composable
-    private fun TodoActivityScreen(todoViewModel: TodoViewModel) {
-       TodoScreen(
-           items = todoViewModel.todoItems,
-           onAddItem = todoViewModel::addItem,
-           onRemoveItem = todoViewModel::removeItem
-       )
-    }
-    ```
-
-  - 定义编辑器状态
-
-    ```kotlin
-    class TodoViewModel : ViewModel() {
-    
-       // private state
-       private var currentEditPosition by mutableStateOf(-1)
-    
-       // state
-       var todoItems by mutableStateOf(listOf<TodoItem>())
-           private set
-    
-       // state
-       val currentEditItem: TodoItem?
-           get() = todoItems.getOrNull(currentEditPosition)
-    
-       // ..
-    ```
-
-  - 定义编辑器事件
-
-    ```kotlin
-    class TodoViewModel : ViewModel() {
-       ...
-    
-       // event: onEditItemSelected
-       fun onEditItemSelected(item: TodoItem) {
-          currentEditPosition = todoItems.indexOf(item)
-       }
-    
-       // event: onEditDone
-       fun onEditDone() {
-          currentEditPosition = -1
-       }
-    
-       // event: onEditItemChange
-       fun onEditItemChange(item: TodoItem) {
-          val currentItem = requireNotNull(currentEditItem)
-          require(currentItem.id == item.id) {
-              "You can only change an item with the same id as currentEditItem"
-          }
-    
-          todoItems = todoItems.toMutableList().also {
-              it[currentEditPosition] = item
-          }
-       }
-    }
-    ```
-
-  - 删除项目时结束编辑
-
-    ```kotlin
-    // event: removeItem
-    fun removeItem(item: TodoItem) {
-       todoItems = todoItems.toMutableList().also { it.remove(item) }
-       onEditDone() // don't keep the editor open when removing items
-    }
-    ```
-
-- 在ViewModel中测试状态
-
-  - 在`test/`目录中打开`TodoViewModelTest.kt`并添加删除项目的测试
-    - before：创建一个新的ViewModel，然后将两个项目添加到TodoItems
-    - during：测试的方法
-    - after：使用断言，断言列表仅包含第二项
-  - 点击运行，若无报错即断言正确
-  - 如果写入`MutableState<T>`是在另一个线程上执行的，它们将不会从您的测试中立即可见
-
-  ```kotlin
-  import com.example.statecodelab.util.generateRandomTodoItem
-  import com.google.common.truth.Truth.assertThat
-  import org.junit.Test
-  
-  class TodoViewModelTest {
-  
-     @Test
-     fun whenRemovingItem_updatesList() {
-         // before
-         val viewModel = TodoViewModel()
-         val item1 = generateRandomTodoItem()
-         val item2 = generateRandomTodoItem()
-         viewModel.addItem(item1)
-         viewModel.addItem(item2)
-  
-         // during
-         viewModel.removeItem(item1)
-  
-         // after
-         assertThat(viewModel.todoItems).isEqualTo(listOf(item2))
-     }
-  }
-  ```
-
-- 重用无状态组合
-
-  - 为Composable组件传入ViewModel的三个新事件以及当前正在编辑的项目（加上？）
-
-    ```kotlin
-    @Composable
-    fun TodoScreen(
-        items: List<TodoItem>,
-        currentlyEditing: TodoItem?,
-        onAddItem: (TodoItem) -> Unit,
-        onRemoveItem: (TodoItem) -> Unit,
-        onStartEdit: (TodoItem) -> Unit,
-        onEditItemChange: (TodoItem) -> Unit,
-        onEditDone: () -> Unit
-    ) {
-    	// ...
-    }
-    ```
-
-  - 创建一个复用Composable：直接套用无状态的TodoItemInput
-
-    - 注意：用的是等号
-
-    ```kotlin
-    @Composable
-    fun TodoItemInlineEditor(
-       item: TodoItem,
-       onEditItemChange: (TodoItem) -> Unit,
-       onEditDone: () -> Unit,
-       onRemoveItem: () -> Unit
-    ) = TodoItemInput(
-       text = item.task,
-       onTextChange = { onEditItemChange(item.copy(task = it)) },
-       icon = item.icon,
-       onIconChange = { onEditItemChange(item.copy(icon = it)) },
-       submit = onEditDone,
-       iconsVisible = true
-    )
-    ```
-
-  - 直接在LazyColumn上使用：若有修改，则显示用于修改的Composable
-
-    - `LazyColumn`不像`RecyclerView`，它不需要做任何回收，不可见即丢弃
-
-    ```kotlin
-    // fun TodoScreen()
-    // ...
-    LazyColumn(
-       modifier = Modifier.weight(1f),
-       contentPadding = PaddingValues(top = 8.dp)
-    ) { 
-     items(items) { todo ->
-       if (currentlyEditing?.id == todo.id) {
-           TodoItemInlineEditor(
-               item = currentlyEditing,
-               onEditItemChange = onEditItemChange,
-               onEditDone = onEditDone,
-               onRemoveItem = { onRemoveItem(todo) }
-           )
-       } else {
-           TodoRow(
-               todo,
-               { onStartEdit(it) },
-               Modifier.fillParentMaxWidth()
-           )
-       }
-    }
-    // ...
-    ```
-
-##### 使用插槽slot来传递Composable
-
-- Slot可以作为composable的参数，相当于把一个Composable作为参数。调用方法形如 `@Composable () -> Unit`
-
-- 调用方：
-
-  ```kotlin
-  @Composable
-  fun TodoItemInput(
-     // ...
-     buttonSlot: @Composable() () -> Unit,
-  ) {
-     Column {
-         // ...
-         Box(Modifier.align(Alignment.CenterVertically)) { buttonSlot() }
-     }
-  }
-  ```
-
-- 传入方
-
-  - 将slot写在 { } 内，这是尾随 lambda 语法
-  - 亦或者按照平时的写法，写在（ ）内
-
-  ```kotlin
-  TodoItemInput(
-     // other Parameters
-  ) {
-    // Slot
-     TodoEditButton(onClick = submit, text = "Add", enabled = text.isNotBlank())
-  }
-  ```
-
-
-
-[TOC]
-
-### 动画
-
-##### 简单的过渡动画
-
-- 应用场景：简单属性切换
-
-  - 使用`animate*AsState`API，委托变化。仅适用于简单变化，*可以为size、color、value等
-
-  ```kotlin
-  // no animation
-  val backgroundColor = if (tabPage == TabPage.Home) Purple100 else Green300
-  
-  // with animation
-  val backgroundColor by animateColorAsState(if (tabPage == TabPage.Home) Purple100 else Green300)
-  ```
-
-- 应用场景：组件的可见与否
-
-  ```kotlin
-  // no animation
-  if (extended) {
-  		// ...
-  }
-  
-  // with animation
-  AnimatedVisibility(extended) {
-    	// ...
-  }
-  ```
-
-- 应用场景：组件的可见与否》配置动画 的展开、收起方向
-
-  - enter配置进场、exit配置退场
-  - animationSpec指定了动画值如何随时间改变
-
-  ```kotlin
-  AnimatedVisibility(
-      visible = shown,
-      enter = slideInVertically(
-          // Enters by sliding down from offset -fullHeight to 0.
-          initialOffsetY = { fullHeight -> -fullHeight },
-          animationSpec = tween(durationMillis = 150, easing = LinearOutSlowInEasing)
-      ),
-      exit = slideOutVertically(
-          // Exits by sliding up from offset 0 to -fullHeight.
-          targetOffsetY = { fullHeight -> -fullHeight },
-          animationSpec = tween(durationMillis = 250, easing = FastOutLinearInEasing)
-      )
-  ) {
-    // ...
-  }
-  ```
-
-- 应用场景：组件长宽变化时的过度动画
-
-  - 只需在modifier里加上`.animateContentSize()`即可
-
-  ```kotlin
-  Column(
-      modifier = Modifier
-          .fillMaxWidth()
-          .padding(16.dp)
-          .animateContentSize()
-  ) {
-      // ... the title and the body
-  }
-  ```
-
-
-##### 多值动画
-
-- 同时给多个值设置同一个动画，可以使用`Transition`
-
-  ```kotlin
-  // no animation
-  val indicatorLeft = tabPositions[tabPage.ordinal].left
-  val indicatorRight = tabPositions[tabPage.ordinal].right
-  val color = if (tabPage == TabPage.Home) Purple700 else Green800
-  
-  // with animation
-  val transition = updateTransition(tabPage)
-  val indicatorLeft by transition.animateDp { page ->
-      tabPositions[page.ordinal].left
-  }
-  val indicatorRight by transition.animateDp { page ->
-      tabPositions[page.ordinal].right
-  }
-  val color by transition.animateColor { page ->
-      if (page == TabPage.Home) Purple700 else Green800
-  }
-  ```
-
-- 自定义动画行为
-
-  - 靠近目的地的边比另一边移动得更快来实现指标的弹性效果
-  - 可以使用 `isTransitioningTo`的lambda（`transitionSpec`中的中缀函数）来确定状态变化的方向
-
-##### 重复动画
-
-- 应用场景：刷新某个部件后的等待动画，通过修改不透明度实现重复动画
-
-  ```kotlin
-  // no animation
-  val alpha = 1f
-  
-  // with repeated animation
-  val infiniteTransition = rememberInfiniteTransition()
-  val alpha by infiniteTransition.animateFloat(
-      initialValue = 0f,
-      targetValue = 1f,
-      animationSpec = infiniteRepeatable(
-          animation = keyframes {
-              durationMillis = 1000
-              0.7f at 500
-          },
-          repeatMode = RepeatMode.Reverse
-      )
-  )
-  ```
-
-##### 手势动画
-
-- 应用场景：划动删除
-  - 速度不够快时不能删
-
-
-
-### 导航
-
-##### 使用Navigation
-
--   NavController：Navigation的核心组件
-
-    -   内部有栈来记录历史导航。即使是类似同一页面下fragment之间的切换，也视为状态的增加，状态会被放入栈中。在按下返回键退出app时需要多次按下直到栈空
-    -   在compose中，使用NavHostController。这是NavController的子类
-
-    ```kotlin
-    val navController = rememberNavController()
-    ```
-
--   使用NavHost作为内容
-
-    -   NavGraphBuilder.composable作为其状态
-    -   String作为路由（如：RallyScreen.Overview.name）
-
-    ```kotlin
-    NavHost(
-        navController = navController,
-        startDestination = RallyScreen.Overview.name,
-        modifier = Modifier.padding(innerPadding)
-    ){
-        composable(RallyScreen.Overview.name) {
-            // ...
-        }
-        composable(RallyScreen.Accounts.name) {
-            // ...
-        }
-        composable(RallyScreen.Bills.name) {
-            // ...
-        }
-    }
-    ```
-
--   将页面的切换告知NavController
-
-    ```kotlin
-    RallyTabRow(
-        allScreens = allScreens,
-        onTabSelected = { screen -> 
-                 navController.navigate(screen.name) },
-        currentScreen = currentScreen
-    ){/**/}
-    ```
-
--   获取栈顶（当前页面）
-
-    ```kotlin
-    val backStackEntry = navController.currentBackStackEntryAsState()
-    val currentScreen = RallyScreen.fromRoute(backStackEntry.value?.destination?.route)
-    ```
-
-
-
-##### 带参的导航
-
--   【route是唯一的吗？（一个route必须只对应一个页面？）】
-
--   接收参数
-
-    -   参数能够在route中体现，使用了大括号包住
-    -   在arguments中指定参数类型
-    -   通过entry得到参数
-
-    ```kotlin
-    // 参数name
-    composable(
-        route = "$accountsName/{name}",
-        arguments = listOf(
-            navArgument("name") {
-                // Make argument type safe
-                type = NavType.StringType
-            }
-        )
-    ){ entry ->
-        val accountName = entry.arguments?.getString("name")
-        // ...
-    }
-    ```
-
--   填入参数
-
-    ```kotlin
-    navController.navigate("${RallyScreen.Accounts.name}/$name")
-    ```
-
-
-##### 外部可访问的链接deep link
-
--   在manifest中声明
-
-    -   这里使用`rally://accounts/{name}`作为deep link URL
-
-    ```xml
+```
+- 获取堆栈中当前目的地的实时更新
+```Kotlin
+val nc = rememberNavController()
+val cs by nc.currentBackStackEntryAsState()
+// Fetch your currentDestination:
+val currentDestination = cs?.destination
+```
+- 深层链接
+	- 令该页面能够直接被快捷方式打开
+	- 在Manifest中声明
+	- 在对应的composable函数中使用deepLinks参数
+```xml
+<activity
+    android:name=".RallyActivity"
+    android:windowSoftInputMode="adjustResize"
+    android:label="@string/app_name"
+    android:exported="true">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
     <intent-filter>
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="rally" android:host="accounts" />
+        <data android:scheme="rally" android:host="single_account" />
     </intent-filter>
-    ```
+</activity>
+```
+```Kotlin
+composable(
+	route = SingleAccount.routeWithArgs,    
+	// ...    
+	deepLinks = listOf(navDeepLink {
+		uriPattern = "rally://${SingleAccount.route}/{${SingleAccount.accountTypeArg}}"
+	})
+)
+```
+- 测试深层链接
+```sh
+adb shell am start -d "rally://single_account/Checking" -a android.intent.action.VIEW
+```
 
--   在composable参数中额外声明deepLinks
 
-    ```kotlin
-    composable(
-        "$accountsName/{name}",
-        arguments = listOf(
-            navArgument("name") {
-                // Make argument type safe
-                type = NavType.StringType
-            }
-        ),
-        deepLinks = listOf(navDeepLink { uriPattern = "rally://$accountsName/{name}" })
+#### 为导航提供参数
+- 设置参数提供的样式
+	- 在Composable函数中提供arguments变量，并指定类型
+```Kotlin
+composable(
+    route = "${account.route}/{${account.typeArg}}",
+    arguments = listOf(
+        navArgument(account.typeArg) { 
+	        type = NavType.StringType 
+	    }
     )
-    ```
+) {
+    accountScreen()
+}
+```
+- 访问参数
+```Kotlin
+composable(
+	route = ...,
+	arguments = ...
+) { navBackStackEntry ->
+	// Retrieve the passed argument
+	val accountType = navBackStackEntry
+		.arguments?.getString(account.typeArg)
+}
+```
+- 传递参数
+```Kotlin
+// 好像什么都没发生一样
+navController       
+	.navigateSingleTopTo(
+		"${account.route}/theType"
+	)
+```
 
--   测试deep link：使用adb
 
-    ```sh
-    adb shell am start -d "rally://accounts/Checking" -a android.intent.action.VIEW
-    ```
+## 迁移
+#### View中使用Compose
+- 使用ComposeView
+```xml
+<androidx.compose.ui.platform.ComposeView
+	android:id="@+id/compose_view"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"/>
+```
+```kotlin
+composeView.apply {
+	// 在view的LifecycleOwner销毁时，处置Composition
+	//（仅在Fragment中使用ComposeView时，才需要这样做，从而保证其拥有正确的生命周期）
+	setViewCompositionStrategy(
+		ViewCompositionStrategy
+			.DisposeOnViewTreeLifecycleDestroyed
+	)
+	setContent {
+		MaterialTheme {
+			PlantDetailDescription(plantDetailViewModel)
+		}
+	}
+}
+```
 
-    
-
-
-
-
-
-[TOC]
-
-### 迁移到Jetpack Compose
-
-- 在`build.gradle (Module:...`配置：
-
-  - 添加上`compose true`
-
-  ```
-  android {
-      ...
-      kotlinOptions {
-          jvmTarget = '1.8'
-          useIR = true
-      }
-      buildFeatures {
-          ...
-          compose true
-      }
-      composeOptions {
-          kotlinCompilerExtensionVersion rootProject.composeVersion
-      }
-  }
-  ```
-
-  
+#### Compose中使用View
+- 示例：目前Compose不支持显示 HTML 格式的文本，所以需要构建一个TextView
+```Kotlin
+val description = "HTML<br><br>description"
+val htmlDescription = remember(description) {
+	HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_COMPACT)
+}
+AndroidView(
+	factory = { context ->
+		TextView(context).apply {
+			movementMethod = LinkMovementMethod.getInstance()
+		}
+	},
+	update = {
+		it.text = htmlDescription
+	}
+)
+```
