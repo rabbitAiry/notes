@@ -1,13 +1,3 @@
-# Android 基础篇
-
-- 日志工具：级别越下越高
-    - Log.v() 打印最为琐碎的日志信息verbose
-    - Log.d() 打印调试信息debug
-    - Log.i() 打印重要信息info
-    - Log.w() 打印警告信息warn
-    - Log.e() 打印错误信息error
-
-
 ## Activity篇
 ##### Activity生命周期
 - 返回栈：安卓使用Task(任务)来管理活动，一个Task就是一组存放在栈里的活动的集合，这个栈称为Back Stack(返回栈)

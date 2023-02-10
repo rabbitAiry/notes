@@ -1,4 +1,4 @@
-> [compose codelab](https://developer.android.google.cn/courses/pathways/compose) 
+ > [compose codelab](https://developer.android.google.cn/courses/pathways/compose) 
 > [compose文档](https://developer.android.google.cn/jetpack/compose/layouts/basics)
 
 ## 基础使用
@@ -38,17 +38,18 @@ fun DefaultPreview() {
 
 
 ## 常用组件
-#### 文本和空间
-- Modifier属性
-	- [修饰符列表](https://developer.android.google.cn/jetpack/compose/modifiers-list) 
-	- 常见
-		- heightIn：描述高度，包括最大最小值
-- Surface
-	- shape
-		- 使得该Composable内所有元素都绘制在该形状之内
-- Divider：分割线
-- Spacer：留白
+#### 文本
+- 说明
+	- Modifier属性
+		- [修饰符列表](https://developer.android.google.cn/jetpack/compose/modifiers-list) 
+		- 常见
+			- heightIn：描述高度，包括最大最小值
+	- 文本资源
+		- 使用stringResource()获取
+		- 使用`@StringRes`修饰函数参数表示传入文本资源id
 - Text
+	- style：文本样式，参数常为`MaterialTheme.typography.**`
+	- Modifier.paddingFromBaseline：从文本基线开始的padding，只有上下参数可填
 ```Kotlin
 Text(
 	text = name,
@@ -58,10 +59,43 @@ Text(
 )
 ```
 - TextField
+	- leadingIcon：输入框内的图标
+	- placeholder：输入框无内容时，显示的提示性文本
+- 使文本渲染多种样式
+	- 使用AnnotatedString来创建带有标记的文本
+```kotlin
+val text = buildAnnotatedString {
+	append("This is some unstyled text\n")
+	withStyle(SpanStyle(color = Color.Red)) {
+		append("Red text\n")
+	}
+	withStyle(SpanStyle(fontSize = 24.sp)) {
+		append("Large text")
+	}
+}
+```
 
-#### 处理图片
-- 使用painterResourse得到drawable中的图片
-- clip：图片容器，比如圆形
+#### 空间
+- Surface
+	- shape
+		- 使得该Composable内所有元素都绘制在该形状之内
+- Divider
+- Spacer
+
+
+#### 形状与图片
+- 说明
+	- 图片资源
+		- 使用painterResource()获取
+		- 使用`@DrawableRes`修饰函数参数表示传入图片资源id
+- Image
+	- painter：图片来源
+	- contentDescription：无障碍，为图片提供文本说明。通常只有非装饰性图片才需要提供，否则应该传入null
+	- contentScale：将图片缩放
+		- Fit：等比缩放图片，使得图片宽高不大于边框的宽高
+		- FillBounds：拉伸图片从而填充边框
+		- Crop：等比缩放图片从而填充边框
+	- Modifier.clip：用于指定图片容器，比如圆形
 - contentScale：图片缩放程度
 	- fit：能够看到整张图片
 	- fillBounds：拉伸图片使得占满容器
@@ -79,6 +113,17 @@ Image(
 
 
 ## 状态
+#### 概念
+- 状态提升
+	- 将事件让父级Composable管理，将状态向下传递
+- 保留状态
+	- 当activity发生配置变更时，所有状态都会丢失
+	- 使用rememberSaveable保存状态
+- 副作用（附带效应、SideEffect）
+	- 指发生在组合函数作用域之外的应用状态变化
+	- 例如，用户点击按钮后打开一个新的屏幕
+	- 副作用带来的问题是，当重组时，副作用会再一次重新发生。协程小节中会提到解决方法
+
 #### 重组
 - 概念
 	- Compose通过调用可组合函数将数据转换为界面，如果您的数据发生变化（状态发生更改），Compose 会使用新数据重新执行这些函数
@@ -97,12 +142,6 @@ OutlinedButton(
 	Text(if (expanded.value) "Show less" else "Show more")
 }
 ```
-#### 状态提升
-- 将事件让父级Composable管理，将状态向下传递
-
-#### 保留状态
-- 当activity发生配置变更时，所有状态都会丢失
-- 使用rememberSaveable保存状态
 
 #### 使用协程
 - 在Composable内部使用`LaunchedEffect()`从而安全地使用协程
@@ -117,7 +156,27 @@ LaunchedEffect(playerOne, playerTwo) {
     raceInProgress = false  // 等待coroutineScope执行结束才能执行
 }
 ```
-
+- 副作用与协程
+	- 带来的问题
+		- 当重组时，副作用会再一次重新发生，从而产生非预期内的现象
+	- 解决方法
+		- 不要使用变量作为LaunchedEffect的参数，而是使用常量
+		- 使用rememberUpdatedState来处理协程中可能会变化的参数，使得协程总是能够用上最新更新后的变量
+```kotlin
+@Composable
+fun LandingScreen(modifier: Modifier = Modifier, onTimeout: () -> Unit) {
+// ...
+val currentOnTimeout by rememberUpdatedState(onTimeout)
+LaunchedEffect(true) {
+	delay(SplashWaitTime)
+	currentOnTimeout()
+}
+// ...
+}
+```
+- 解决使用协程的Composable带来的副作用
+	- 协程中使用Composable可能是因为存在动画效果
+	- 此种情况下使用rememberCoroutineScope，可以在组合之外创建协程（如回调）
 
 ## 布局
 #### 布局基础
@@ -164,148 +223,28 @@ Column(
 - 内容槽
 	- 在某个UI组件中放入composable
 
-#### Material布局
-- Scaffold
-	- 提供便捷的布局
-	- 应用栏
-		- 包括顶部栏topBar和底部栏bottomBar
-	```Kotlin
-	Scaffold(
-	    bottomBar = {
-	        BottomAppBar { /* Bottom app bar content */ }
-	    }
-	) {
-	    // Screen content
-	}	
-	```
-	- FAB
-		- 使用 `floatingActionButtonPosition` 参数来调整水平位置
-		- 使用 `isFloatingActionButtonDocked` 参数将 FAB 与底部应用栏重叠
-		- 支持使用`cutoutShape` 参数设置FAB位置风格
-	- SnackBar
-		- 由ScaffoldState提供
-	```Kotlin
-	val scaffoldState = rememberScaffoldState()
-	val scope = rememberCoroutineScope()
-	Scaffold(
-	    scaffoldState = scaffoldState,
-	    floatingActionButton = {
-	        ExtendedFloatingActionButton(
-	            text = { Text("Show snackbar") },
-	            onClick = {
-	                scope.launch {
-	                    scaffoldState.snackbarHostState
-	                        .showSnackbar("Snackbar")
-	                }
-	            }
-	        )
-	    }
-	) {
-	    // Screen content
-	}
-	```
-	- 抽屉式导航栏drawerContent
-
-
-#### 自定义布局
-- layout修饰符
+#### 布局样式
+- 【名词】主轴与交叉轴
+	- 对于Column，主轴是垂直轴，交叉轴是水平轴
+	- 对于Row，主轴是水平轴，交叉轴是垂直轴
+- 主轴排列方式
+	- 作为horizontalArrangement或verticalArrangement参数
+	- 选项
+		- Equal Weight：所有元素占据同样的宽度/高度
+		- Space Between：元素在主轴上均匀放置，其中首末元素紧贴边框
+		- Space Around：元素在主轴上均匀放置，围绕之间散开
+		- Space Evently：元素在主轴上均匀放置，其中元素间包括首末元素与边框之间的距离相同
+		- End：元素紧靠末端
+		- Center：元素紧靠中部
+		- Start：元素紧靠首端
+		- Arrangement.spacedBy()：元素之间存在固定间距
+- contentPadding
+	- 相当于在布局元素的首末设置Spacer留白
+	- （直接使用padding会体现出view中margin的感觉）
+- 自适应布局
+	- 根据分配给可组合项用于执行渲染的实际宽度从而进行自适应布局
 ```Kotlin
-@Preview
-@Composable
-fun TextWithPaddingToBaselinePreview() {
-// baseline到顶部为32dp
-    MyApplicationTheme {
-        Text("Hi there!", Modifier.firstBaselineToTop(32.dp))
-    }
-}
-
-@Preview
-@Composable
-fun TextWithNormalPaddingPreview() {
-// 文字顶部到顶部为32dp
-    MyApplicationTheme {
-        Text("Hi there!", Modifier.padding(top = 32.dp))
-    }
-}
-
-// 自定义的方法
-fun Modifier.firstBaselineToTop(
-    firstBaselineToTop: Dp
-) = layout { measurable, constraints ->
-    // Measure the composable
-    val placeable = measurable.measure(constraints)
-
-    // Check the composable has a first baseline
-    check(placeable[FirstBaseline] != AlignmentLine.Unspecified)
-    val firstBaseline = placeable[FirstBaseline]
-
-    // Height of the composable with padding - first baseline
-    val placeableY = firstBaselineToTop.roundToPx() - firstBaseline
-    val height = placeable.height + placeableY
-    layout(placeable.width, height) { // 指定可组合项的尺寸
-        // Where the composable gets placed
-        placeable.placeRelative(0, placeableY)
-    }
-}
-```
-- 创建自定义布局
-	- 使用Layou Composable，`Column` 和 `Row` 等所有较高级别的布局都使用 `Layout` 可组合项构建而成。
-		- `measurables` 与 `layout` 修饰符类似，是需要测量的子项的列表
-		- `constraints` 是来自父项的约束条件
-	```Kotlin
-	@Composable
-	fun MyBasicColumn(
-	    modifier: Modifier = Modifier,
-	    content: @Composable () -> Unit
-	) {
-	    Layout(
-	        modifier = modifier,
-	        content = content
-	    ) { measurables, constraints ->
-	        // Don't constrain child views further, measure them with given constraints
-	        // 测量每个子部件
-	        val placeables = measurables.map{measurable ->
-	            measurable.measure(constraints)
-	        }
-	
-	        layout(constraints.maxWidth, constraints.maxHeight) {
-	            var yPosition = 0
-	            // 放置每个子部件
-	            placeables.forEach { placeable ->
-	                placeable.placeRelative(0, yPosition)
-	                yPosition += placeable.height
-	            }
-	        }
-	    }
-	}
-	```
-- 布局方向
-	- 通过更改LocalLayoutDirection来更改
-
-
-#### 自适应布局
-- 根据分配给可组合项用于执行渲染的实际宽度从而进行自适应布局
-```Kotlin
-@Composable
-fun Card(/* ... */) {
-    BoxWithConstraints {
-        if (maxWidth < 400.dp) {
-            Column {
-                Image(/* ... */)
-                Title(/* ... */)
-            }
-        } else {
-            Row {
-                Column {
-                    Title(/* ... */)
-                    Description(/* ... */)
-                }
-                Image(/* ... */)
-            }
-        }
-    }
-}
-
+if (maxWidth < 400.dp) { /* ... */} else {}
 ```
 
 #### 滚动列表
@@ -318,8 +257,9 @@ Column(Modifier.verticalScroll(scrollState)) {
 	}
 }
 ```
-- LazyColumn或LazyRow的使用
-	- 作用域中通过提供items元素提供渲染逻辑
+- LazyColumn/LazyRow的使用
+	- 通过作用域中提供items元素提供布局样式
+		- itemsIndexed()额外提供了index
 	- 使用`Arrangement.spacedBy()`方法，在每个可组合子项之间添加固定间距
 	- 使用`contentPadding`添加内边距
 ```Kotlin
@@ -336,7 +276,7 @@ private fun Greetings(names: List<String> = List(1000) { "$it" } ) {
     }
 }
 ```
-- LazyColumn或LazyRow的注意事项
+- Lazy\*的注意事项
 	- `LazyColumn` 不会像 `RecyclerView` 一样回收其子级。它会在您滚动它时发出新的可组合项，并保持高效运行，因为与实例化 Android `Views` 相比，发出可组合项的成本相对较低
 	- 如果您改变第 1 项内容，然后滚动到第 20 项内容，再返回到第 1 项内容，会发现第 1 项内容回到原来的状态。如果需要，您可以使用 `rememberSaveable` 保存此数据
 - 可变列表
@@ -349,7 +289,107 @@ Column(modifier = modifier) {
 	})
 }
 ```
+- LazyHorizontalGrid/LazyVerticalGrid
+	- 提供滚动列表
+```kotlin
+LazyHorizontalGrid(
+   rows = GridCells.Fixed(2),
+   modifier = modifier
+) {
+   items(favoriteCollectionsData) { item ->
+	   FavoriteCollectionCard(item.drawable, item.text)
+   }
+}
+```
 
+#### Material布局
+- Scaffold
+	- 提供便捷的布局，提供了丰富的插槽
+	- 应用栏
+		- 包括顶部栏topBar和底部栏bottomBar
+```Kotlin
+Scaffold(
+	bottomBar = {
+		BottomAppBar { /* Bottom app bar content */ }
+	}
+) {
+	// Screen content
+}	
+```
+- FAB
+	- 使用 `floatingActionButtonPosition` 参数来调整水平位置
+	- 使用 `isFloatingActionButtonDocked` 参数将 FAB 与底部应用栏重叠
+	- 支持使用`cutoutShape` 参数设置FAB位置风格
+- SnackBar
+	- 由ScaffoldState提供
+```Kotlin
+val scaffoldState = rememberScaffoldState()
+val scope = rememberCoroutineScope()
+Scaffold(
+	scaffoldState = scaffoldState,
+	floatingActionButton = {
+		ExtendedFloatingActionButton(
+			text = { Text("Show snackbar") },
+			onClick = {
+				scope.launch {
+					scaffoldState.snackbarHostState
+						.showSnackbar("Snackbar")
+				}
+			}
+		)
+	}
+) {
+	// Screen content
+}
+```
+- BottomNavigation底部导航栏
+	- 提供阴影样式，使用BottomNavigationItem作为其元素
+
+
+## 主题
+#### MaterialDesign定义
+- 色彩
+	- primary
+		- 主要品牌色
+	- secondary
+		- 强调色
+		- 为形成对比的区域提供颜色更深/更浅的变体
+		- 例如，悬浮操作按钮的默认颜色
+	- background、surface
+		- 用于那些容纳在概念上驻留在应用“Surface”的组件的容器
+		- 例如，Card的默认颜色为surface
+	- onSurface
+		- 针对具名颜色上层的内容使用的颜色
+		- 例如，“surface”色容器中的文本应采用“on surface”颜色
+- 文字排版
+	- H1~H6
+		- 字体大小依次为96、60、48、34、24、20
+	- Subtitle1~Subtitle2
+		- 字体大小依次为16、14
+	- Body1~Body2
+		- 字体大小依次为16、14
+	- Button
+		- 字体大小为14
+	- Caption
+		- 字体大小为12
+	- Overline
+		- 字体大小为10
+- 形状
+	- 定义了3个类别：小型、中型和大型组件
+
+#### 定义主题
+- 在Themes.kt中编辑主题样式
+```kotlin
+@Composable
+fun JetnewsTheme(content: @Composable () -> Unit) {
+  MaterialTheme(
+    colors = LightColors,
+    typography = JetnewsTypography,
+    shapes = JetnewsShapes,
+    content = content
+  )
+}
+```
 
 
 ## 动画

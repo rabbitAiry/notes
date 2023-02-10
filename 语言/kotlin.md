@@ -799,14 +799,12 @@ launch(Dispathers.Main){
 	imView.setImageBitmap(image)
 }
 
-suspend fun getImage(){
-	withContext(Dispathcers.IO){
+suspend fun getImage(): Image{
+	return withContext(Dispathcers.IO){
 		getImageWithTime()
 	}
 }
 ```
-
-
 
 - 概念
 	- Job作业：可取消的工作单元
