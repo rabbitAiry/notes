@@ -718,3 +718,7 @@ AndroidView(
 	}
 )
 ```
+
+
+## 提问区
+- Column中包着一个Card，Card中直接包着两个Text，这两个Text会如何排列？
